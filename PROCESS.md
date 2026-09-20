@@ -1,12 +1,14 @@
 # Process
 
-<!-- Same as assignment 1, same honesty. Which tools you used and for what; one
-thing you kept and why it was good; one thing you rejected and why it was wrong.
-"I did not use any" is fine if it is true.
+### Design Idea
+Traditional data charts focus on reading values. As a designer, I wanted to explore how weather data can create atmosphere and emotional feeling.
+The core question: What does this weather feel like?
 
-If a model wrote most of plot.py, which is likely and allowed, the interesting part
-is what you had to correct: did it invent a column name, use pandas where a list
-would do, silently drop the rows it could not parse? -->
+### Data & Visual Mapping Decision
+I selected rainfall and humidity from Hong Kong Observatory.
+- No axes or number-heavy diagram. I removed chart borders to keep immersive atmosphere.
+- Low rainfall: warm, sparse particles, bright background → calm sunny mood
+- Heavy rainfall: dark background, massive falling particles → heavy, wet atmosphere
 
 ## Tools
 
