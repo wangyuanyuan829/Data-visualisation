@@ -1,0 +1,26 @@
+{
+  "rainfall_regions": [
+    {
+      "place": "Quarry Bay",
+      "max": 12
+    },
+    {
+      "place": "Central",
+      "max": 8
+    },
+    {
+      "place": "Kowloon",
+      "max": 15
+    },
+    {
+      "place": "Shatin",
+      "max": 6
+    },
+    {
+      "place": "Tsuen Wan",
+      "max": 9
+    }
+  ],
+  "humidity": 78,
+  "record_time": "2026-09-20T15:00:00"
+}
