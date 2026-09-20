@@ -1,30 +1,18 @@
 # The phenomenon
+![Weather Atmosphere: Rain particle animation](site/rain_atmosphere.gif)
 
-<!-- This is the SD5913 assignment 2 template. Everything in this file is yours to
-replace, and the check counts words: comments like this one are not words, so
-delete each one as you write. Start with the heading: name the phenomenon.
+# The phenomenon
 
-Then, in this order, at least 150 words in total.
-
-New to folders, paths, or the files here whose names start with a dot? Read
-https://github.com/sd5913/pfad/blob/2026/reference/files.md first. Ten minutes. -->
-
+This project visualises rainfall across Hong Kong, a natural atmospheric phenomenon that fluctuates hour by hour with changing weather systems. Rainfall is chosen for this visualisation because it directly shapes the sensory mood of the environment; heavy downpours create a dense, immersive feeling while sunny periods bring calm and brightness. Instead of presenting rainfall as dry numerical statistics, this work translates the measured rainfall value into an atmospheric particle animation, exploring how abstract meteorological data can represent the emotional feeling of weather.
 ![what the picture is](out/plot.png)
-
-## The phenomenon
-
-<!-- What goes up and down, and why you looked at it. -->
 
 ## The source
 
-<!-- A link to the page or endpoint the file came from, and one line on what is in
-the file: how many rows, what a row means, what the units are. -->
+Data is retrieved from Hong Kong Observatory open API endpoint: https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en. The JSON dataset contains rainfall readings from multiple automatic weather stations across Hong Kong. Each station entry holds a place name and the maximum one-hour accumulated rainfall in millimetres. It also includes relative humidity and a timestamp marking when the observations were recorded.
 
 ## What the picture shows
 
-<!-- Two or three sentences. Including what it hides: every transformation throws
-something away, and naming what yours threw away is the easiest way to sound like
-you know what you did. -->
+The animation shows falling raindrop particles, where rainfall magnitude controls background colour, particle count and falling speed. Denser, faster particles with a dark palette represent heavy rain, while sparse warm particles indicate dry sunny weather. This visualisation discards individual station-specific rainfall values; it uses only the average rainfall across all Hong Kong stations, losing regional spatial differences to focus purely on the overall atmospheric mood.
 
 ## Run it
 
