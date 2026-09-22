@@ -3,37 +3,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Weather Mood Visualisation</title>
+    <title>Rainfall Mood Curtain Visualisation</title>
     <style>
-        body {
-            background: #6baed6;
-            font-family: sans-serif;
-            text-align: center;
-            padding:30px;
-        }
-        .container{
-            max-width:800px;
-            margin:0 auto;
-        }
-        img{
-            width:100%;
-            border-radius:8px;
-        }
-        .desc{
-            color:white;
-            font-size:18px;
-            margin-top:20px;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0b1030; font-family:sans-serif; color:#fff; text-align:center; padding:20px;}
+        canvas{border-radius:10px; max-width:90vw;}
+        .desc{margin-top:20px; font-size:17px;}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Rainfall → Mood Visualisation</h2>
-        <img src="rain_atmosphere.gif">
-        <div class="desc">
-            Visual design based on color psychology<br>
-            The animation cycles through different rainfall levels and corresponding emotional atmospheres
-        </div>
+    <h2>Rain Curtain · Weather Mood Visualisation</h2>
+    <p style="opacity:0.7; margin:8px 0">Move your mouse over to pull open the rain curtain</p>
+    <canvas id="rainCanvas" width="900" height="520"></canvas>
+    <div class="desc">
+        Visual mapping based on colour psychology.<br>
+        Rainfall controls curtain density and atmosphere.
     </div>
+    <script>
+        const canvas = document.getElementById("rainCanvas");
+        const ctx = canvas.getContext("2d");
+        let mouseX = -100;
+        let lines = [];
+        const totalLines = 70;
+
+        // 初始化雨帘竖线
+        for(let i=0;i<totalLines;i++){
+            lines.push({
+                baseX: 10 + i*(canvas.width-20)/totalLines,
+                offset:0,
+                speed: 1.2 + Math.random()*0.8
+            })
+        }
+        canvas.onmousemove = e=>{
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+        }
+        canvas.onmouseleave = ()=> mouseX = -100;
+
+        function draw(){
+            ctx.fillStyle="#0b1030";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+
+            lines.forEach(line=>{
+                // 鼠标附近，雨线向两边偏移，制造掀开效果
+                const dist = Math.abs(line.baseX - mouseX);
+                if(dist < 120){
+                    line.offset = (mouseX - line.baseX) * 0.4;
+                }else{
+                    line.offset *=0.92;
+                }
+                const x = line.baseX + line.offset;
+                // 画雨线
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.strokeStyle="#6096ff44";
+                ctx.lineWidth=1;
+                ctx.stroke();
+                // 循环下落水滴
+                for(let y= (Date.now()*0.04 * line.speed) % canvas.height; y>0; y-=70){
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x-4, y+9);
+                    ctx.lineTo(x+4, y+9);
+                    ctx.closePath();
+                    ctx.fillStyle="#c6e2ff";
+                    ctx.fill();
+                }
+            })
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
 </body>
 </html>
