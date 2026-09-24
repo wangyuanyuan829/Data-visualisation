@@ -1,9 +1,14 @@
-# Made from data/ on every run. Commit out/; never commit site/.
-site/
-data/cache/
-
-# Machinery, not work.
-.venv/
+# Python
 __pycache__/
-.DS_Store
-Thumbs.db
+*.pyc
+*.pyo
+*.pyd
+.venv/
+
+# 旧输出文件夹
+out/
+data/
+
+# 临时文件
+*.csv
+weather_data.json
