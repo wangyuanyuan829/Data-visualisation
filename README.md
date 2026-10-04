@@ -2,7 +2,8 @@
 This project is an artistic data visualisation of historical daily rainfall records in Hong Kong, built following the artist’s path for assignment 2.
 It translates real measured rainfall numbers into an interactive web‑based rain‑curtain animation. The amount of rainfall controls background colour, raindrop count and falling speed, so users can perceive different rainfall moods by selecting historical dates.
 
-![Rain‑curtain interactive preview](out/rain_atmosphere.gif)
+<img width="2560" height="1418" alt="image" src="https://github.com/user-attachments/assets/bad28877-8d77-484d-8472-882bd47d97c8" />
+
 
 ## Data source
 Raw data comes from **Hong Kong Observatory (HKO) open weather dataset**.
