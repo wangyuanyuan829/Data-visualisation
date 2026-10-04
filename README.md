@@ -1,5 +1,4 @@
 # Kowloon‑Rainfall Interactive Rain Curtain Visualisation
-
 This project is an artistic data visualisation of historical daily rainfall records in Hong Kong, built following the artist’s path for assignment 2.
 It translates real measured rainfall numbers into an interactive web‑based rain‑curtain animation. The amount of rainfall controls background colour, raindrop count and falling speed, so users can perceive different rainfall moods by selecting historical dates.
 
@@ -32,4 +31,3 @@ Interactive web page hosted by GitHub Pages:
 2. Fetch and save raw HKO rainfall source data:
 ```bash
 uv run fetch.py
-
