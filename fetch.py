@@ -1,82 +1,42 @@
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["requests"]
+# dependencies = ["pandas"]
 # ///
-import requests
-import csv
+import pandas as pd
 import json
-from pathlib import Path
+import os
 
-# 香港天文台官方真实雨量CSV
-url = "https://data.weather.gov.hk/weatherAPI/cis/csvfile/HKO/ALL/daily_HKO_RF_ALL.csv"
+os.makedirs("data", exist_ok=True)
+os.makedirs("site", exist_ok=True)
 
-Path("data").mkdir(exist_ok=True)
-Path("site").mkdir(exist_ok=True)
+csv_path = "data/daily_HKO_RF_ALL.csv"
+# 跳过前两行说明文字
+df = pd.read_csv(csv_path, skiprows=2)
 
-csv_path = Path("data/daily_HKO_RF_ALL.csv")
-json_path = Path("site/rain_data.json")
+rain_data = []
+for _, row in df.iterrows():
+    try:
+        year = int(row.iloc[0])
+        month = int(row.iloc[1])
+        day = int(row.iloc[2])
+        raw_val = str(row.iloc[3]).strip()
 
-resp = requests.get(url, timeout=15)
-resp.raise_for_status()
-csv_text = resp.text
-csv_path.write_text(csv_text, encoding="utf-8-sig")
-
-rows = []
-reader = csv.reader(csv_text.splitlines())
-
-for row in reader:
-    # 过滤：行太短直接跳过；年份必须能转成数字，跳过所有说明/注释行
-    if len(row) < 4:
-        continue
-    year_str = row[0].strip()
-    # 只处理年份是纯数字的行，直接跳过文字注释行，解决报错！
-    if not year_str.isdigit():
-        continue
-
-    month_str = row[1].strip()
-    day_str = row[2].strip()
-    rain_raw = row[3].strip()
-
-    # 天文台特殊标记处理
-    if rain_raw == "Trace":
-        rain = 0.5
-    elif rain_raw == "-" or rain_raw == "":
-        rain = 0.0
-    else:
-        try:
-            rain = float(rain_raw)
-        except ValueError:
+        # 天文台标记：Trace = 微量降雨，记为0
+        if raw_val.upper() == "TRACE":
             rain = 0.0
+        else:
+            rain = float(raw_val)
 
-    year = int(year_str)
-    month = int(month_str)
-    day = int(day_str)
+        rain_data.append({
+            "date": f"{year}-{month:02d}-{day:02d}",
+            "rainfall": rain
+        })
+    except Exception:
+        # 碰到脏数据自动跳过这一行，不中断程序
+        continue
 
-    # 色彩心理学情绪映射（你的作业设计）
-    if rain <= 0:
-        mood_name = "Calm · 晴朗宁静"
-        mood_key = "clear"
-    elif 0 < rain <= 5:
-        mood_name = "Soft · 细雨舒缓"
-        mood_key = "lightrain"
-    elif 5 < rain <= 20:
-        mood_name = "Heavy · 大雨压抑"
-        mood_key = "heavyrain"
-    else:
-        mood_name = "Storm · 暴雨躁动"
-        mood_key = "storm"
+out_json_path = "site/rain_data.json"
+with open(out_json_path, "w", encoding="utf-8") as f:
+    json.dump(rain_data, f, ensure_ascii=False, indent=2)
 
-    rows.append({
-        "year": year,
-        "month": month,
-        "day": day,
-        "rainfall_mm": rain,
-        "mood": mood_name,
-        "mood_key": mood_key
-    })
-
-# 筛选2026年
-data_2026 = [item for item in rows if item["year"] == 2026]
-
-json_path.write_text(json.dumps(data_2026, indent=2, ensure_ascii=False), encoding="utf-8")
-print(f"✅ 香港天文台真实雨量，一共 {len(data_2026)} 条2026记录，写入 site/rain_data.json")
+print(f"✅ 成功！生成 {out_json_path}，一共 {len(rain_data)} 条降雨记录")

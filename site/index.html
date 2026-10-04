@@ -4,234 +4,315 @@
 <meta charset="UTF-8" />
 <title>RAIN CURTAIN · Interactive Rainfall Mood</title>
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  html,body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-  canvas {
-    display:block;
-    width:100vw;
-    height:100vh;
-    position:fixed;
-    z-index:0;
-  }
-  #app {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top:24px;
-    gap:14px;
-    z-index:40;
-    pointer-events:none;
-  }
-  #titleBar {
-    width:86%;
-    max-width:1120px;
-    border:1px solid rgba(0,0,0,0.18);
-    border-radius:14px;
-    padding:16px 0;
-    text-align:center;
-    background:rgba(255,255,255,0.55);
-    pointer-events:auto;
-  }
-  #title {
-    font-family:"Playfair Display","Times New Roman",serif;
-    font-weight:500;
-    font-size:21px;
-    letter-spacing:10px;
-    color:#2b2b2b;
-  }
-  #subtitle {
-    font-family:"Helvetica Neue",Arial,sans-serif;
-    font-size:10px;
-    letter-spacing:4px;
-    color:#7a7a7a;
-    margin-top:6px;
-  }
-  #dateBar {
-    width:86%;
-    max-width:1120px;
-    border:1px solid rgba(0,0,0,0.18);
-    border-radius:14px;
-    padding:14px 0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:18px;
-    background:rgba(255,255,255,0.55);
-    pointer-events:auto;
-  }
-  #dateBar label {
-    font-family:"Helvetica Neue",Arial,sans-serif;
-    font-size:12px;
-    letter-spacing:3px;
-    color:#555;
-  }
-  .custom-select {
-    position:relative;
-    width:140px;
-    font-family:"Helvetica Neue",Arial,sans-serif;
-    font-size:14px;
-    color:#333;
-  }
-  .select-trigger {
-    border:1px solid rgba(0,0,0,0.2);
-    border-radius:12px;
-    background:#fff;
-    padding:10px 34px 10px 14px;
-    cursor:pointer;
-    user-select:none;
-    position:relative;
-    z-index:2;
-  }
-  .select-trigger::after {
-    content:"";
-    position:absolute;
-    right:14px;
-    top:50%;
-    transform:translateY(-50%);
-    border:5px solid transparent;
-    border-top-color:#555;
-  }
-  .select-options {
-    position:absolute;
-    top:calc(100% +6px);
-    left:0;
-    right:0;
-    border:1px solid rgba(0,0,0,0.2);
-    border-radius:14px;
-    background:#fff;
-    max-height:240px;
-    overflow-y:auto;
-    display:none;
-    flex-direction:column;
-    z-index:5;
-    box-shadow:0 12px 30px rgba(0,0,0,0.12);
-  }
-  .select-options.open { display:flex; }
-  .select-options div {
-    padding:10px 14px;
-    cursor:pointer;
-    border-bottom:1px solid #f0f0f0;
-  }
-  .select-options div:last-child { border-bottom:none; }
-  .select-options div:hover { background:#f2f7ff; }
-  #infoBar {
-    width:86%;
-    max-width:1120px;
-    border:1px solid rgba(0,0,0,0.18);
-    border-radius:14px;
-    padding:12px 0;
-    text-align:center;
-    background:rgba(255,255,255,0.55);
-  }
-  #rainInfo {
-    font-family:"Helvetica Neue",Arial,sans-serif;
-    font-size:13px;
-    color:#444;
-    letter-spacing:2px;
-  }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+}
+#bgCanvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  z-index:0;
+}
+#curtainCanvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  z-index:1;
+}
+#app{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding-top:30px;
+  gap:14px;
+  z-index:40;
+  pointer-events:none;
+}
+.panel{
+  width:86%;
+  max-width:1120px;
+  background: rgba(255,255,255,0.35);
+  border-radius:16px;
+  padding:16px 22px;
+  text-align:center;
+  backdrop-filter:blur(12px);
+  pointer-events:auto;
+  position:relative;
+  z-index:1;
+}
+#titleBar h1{
+  font-family:"Playfair Display","Times New Roman",serif;
+  font-weight:500;
+  font-size:22px;
+  letter-spacing:9px;
+  color:#222f3e;
+}
+#titleBar p{
+  font-size:10px;
+  letter-spacing:4px;
+  color:#556677;
+  margin-top:6px;
+}
+#dateBar{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.select-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  align-items:center;
+  justify-items:center;
+  gap:12px;
+  width:100%;
+}
+.select-group{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+#dateBar label{
+  font-size:12px;
+  letter-spacing:3px;
+  color:#334455;
+}
+.custom-select{
+  position:relative;
+  width:130px;
+  z-index:1000;
+}
+.select-trigger{
+  border:1px solid rgba(90,120,150,0.35);
+  border-radius:12px;
+  background:rgba(255,255,255,0.85);
+  padding:9px 32px 9px 14px;
+  font-size:14px;
+  color:#223344;
+  cursor:pointer;
+  user-select:none;
+  position:relative;
+}
+.select-trigger::after{
+  content:"";
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  border:5px solid transparent;
+  border-top-color:#556677;
+}
+.select-options{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  right:0;
+  border:1px solid rgba(90,120,150,0.25);
+  border-radius:14px;
+  background:rgba(255,255,255,0.96);
+  max-height:240px;
+  overflow-y:auto;
+  display:none;
+  flex-direction:column;
+  z-index:2000;
+  box-shadow:0 12px 30px rgba(30,60,90,0.18);
+}
+.select-options.open{
+  display:flex;
+}
+.select-options div{
+  padding:10px 14px;
+  cursor:pointer;
+  font-size:14px;
+  color:#223344;
+  border-bottom:1px solid #eef4fb;
+}
+.select-options div:last-child{
+  border-bottom:none;
+}
+.select-options div:hover{
+  background:#eaf4ff;
+}
+.info-text{
+  font-size:13px;
+  letter-spacing:2px;
+  color:#223344;
+}
 </style>
 </head>
-
 <body>
-  <div id="app">
-    <div id="titleBar">
-      <div id="title">RAIN CURTAIN</div>
-      <div id="subtitle">INTERACTIVE RAINFALL MOOD</div>
-    </div>
-    <div id="dateBar">
-      <label>MONTH</label>
-      <div class="custom-select" id="monthSelect">
-        <div class="select-trigger">1</div>
-        <div class="select-options"></div>
-      </div>
-      <label>DAY</label>
-      <div class="custom-select" id="daySelect">
-        <div class="select-trigger">1</div>
-        <div class="select-options"></div>
-      </div>
-    </div>
-    <div id="infoBar">
-      <div id="rainInfo">Select a month and a day to explore the rainfall mood.</div>
-    </div>
+<div id="app">
+  <div id="titleBar" class="panel">
+    <h1>RAIN CURTAIN</h1>
+    <p>INTERACTIVE RAINFALL MOOD</p>
   </div>
-
+  <div id="dateBar" class="panel">
+    <div class="select-row">
+      <div class="select-group">
+        <label>YEAR</label>
+        <div class="custom-select" id="yearSelect">
+          <div class="select-trigger">Year</div>
+          <div class="select-options"></div>
+        </div>
+      </div>
+      <div class="select-group">
+        <label>MONTH</label>
+        <div class="custom-select" id="monthSelect">
+          <div class="select-trigger">Month</div>
+          <div class="select-options"></div>
+        </div>
+      </div>
+      <div class="select-group">
+        <label>DAY</label>
+        <div class="custom-select" id="daySelect">
+          <div class="select-trigger">Day</div>
+          <div class="select-options"></div>
+        </div>
+      </div>
+    </div>
+    <div class="info-text" id="infoText"></div>
+  </div>
+</div>
+<canvas id="bgCanvas"></canvas>
 <canvas id="curtainCanvas"></canvas>
-
 <script>
-const canvas = document.getElementById("curtainCanvas");
-const ctx = canvas.getContext("2d");
-const rainInfo = document.getElementById("rainInfo");
-
+const bgCanvas = document.getElementById("bgCanvas");
+const bgCtx = bgCanvas.getContext("2d");
+const curtainCanvas = document.getElementById("curtainCanvas");
+const ctx = curtainCanvas.getContext("2d");
+const infoText = document.getElementById("infoText");
 let W, H;
-let rainData = [];
+let rawRainData = [];
 let rainfall = 0;
 let moodKey = "clear";
-
-// 色彩配置：对应图二弥散渐变风格
-const moodColors = {
-  clear: { c1:[255,247,188], c2:[255,220,160] },
-  lightrain: { c1:[189,215,231], c2:[160,200,240] },
-  heavyrain: { c1:[107,174,214], c2:[40,120,180] },
-  storm: { c1:[33,113,181], c2:[10,40,90] }
-};
-let currentColor = {...moodColors.clear};
-let targetColor = {...moodColors.clear};
-
-// 雨帘物理参数（完全沿用你给的雨帘代码）
-let mouse = { x:-9999, y:-9999, active:false };
+// -------------------- 清新蓝白弥散流体背景 --------------------
+class PerlinNoise{
+  constructor(seed=7){
+    this.p = [];
+    for(let i=0;i<256;i++) this.p[i] = Math.floor(Math.random()*256);
+    for(let i=0;i<256;i++) this.p[256+i] = this.p[i];
+  }
+  fade(t){
+    return t*t*t*(t*(t*6-15)+10);
+  }
+  lerp(t,a,b){
+    return a + t*(b-a);
+  }
+  grad(hash,x,y){
+    let h = hash & 3;
+    let u = h < 2 ? x : y;
+    let v = h < 2 ? y : x;
+    return ((h&1) === 0 ? u : -u) + ((h&2) === 0 ? v : -v);
+  }
+  noise(x,y){
+    let X = Math.floor(x) & 255;
+    let Y = Math.floor(y) & 255;
+    x -= Math.floor(x);
+    y -= Math.floor(y);
+    let u = this.fade(x);
+    let v = this.fade(y);
+    let A = this.p[X] + Y;
+    let AA = this.p[A];
+    let AB = this.p[A+1];
+    let B = this.p[X+1] + Y;
+    let BA = this.p[B];
+    let BB = this.p[B+1];
+    return this.lerp(v,
+      this.lerp(u, this.grad(this.p[AA], x, y), this.grad(this.p[BA], x-1, y)),
+      this.lerp(u, this.grad(this.p[AB], x, y-1), this.grad(this.p[BB], x-1, y-1))
+    );
+  }
+}
+const noise = new PerlinNoise(7);
+let time = 0;
+function drawFluidBackground(){
+  let topColor, bottomColor, speed;
+  if(rainfall <= 0){
+    topColor = [255,255,255];
+    bottomColor = [210,230,245];
+    speed = 0.0008;
+  }else if(rainfall < 10){
+    topColor = [230,244,255];
+    bottomColor = [172,210,240];
+    speed = 0.0016;
+  }else if(rainfall < 30){
+    topColor = [196,221,243];
+    bottomColor = [110,160,210];
+    speed = 0.0028;
+  }else{
+    topColor = [160,190,225];
+    bottomColor = [60,110,160];
+    speed = 0.0042;
+  }
+  time += speed;
+  const imageData = bgCtx.createImageData(W, H);
+  const data = imageData.data;
+  const scale = 0.0016;
+  for(let y = 0; y < H; y += 2){
+    for(let x = 0; x < W; x += 2){
+      let n = noise.noise(x * scale + time, y * scale + time);
+      n = (n + 1) / 2;
+      const r = topColor[0] + (bottomColor[0] - topColor[0]) * n;
+      const g = topColor[1] + (bottomColor[1] - topColor[1]) * n;
+      const b = topColor[2] + (bottomColor[2] - topColor[2]) * n;
+      const idx = (y * W + x) * 4;
+      data[idx] = r;
+      data[idx+1] = g;
+      data[idx+2] = b;
+      data[idx+3] = 255;
+      data[idx+4] = r;
+      data[idx+5] = g;
+      data[idx+6] = b;
+      data[idx+7] = 255;
+      data[idx + W*4] = r;
+      data[idx + W*4 + 1] = g;
+      data[idx + W*4 + 2] = b;
+      data[idx + W*4 + 3] = 255;
+      data[idx + W*4 + 4] = r;
+      data[idx + W*4 + 5] = g;
+      data[idx + W*4 + 6] = b;
+      data[idx + W*4 + 7] = 255;
+    }
+  }
+  bgCtx.putImageData(imageData, 0, 0);
+}
+// -------------------- 雨帘系统 --------------------
 const COLS = 44;
-const SEGS = 40;
-const REST = 14;
+const SEGS = 48;
+const REST = 11;
 let curtain = [];
 let drops = [];
-let frameLeft, frameRight, frameTop, frameBottom;
-
-function resize(){
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-  // 雨帘画框区域
-  frameLeft = W * 0.07;
-  frameRight = W * 0.93;
-  frameTop = H * 0.43;
-  frameBottom = H * 0.95;
-  initCurtain();
-  initDrops();
-}
-window.addEventListener("resize", resize);
-
-canvas.addEventListener("mousemove", e=>{
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-  mouse.active = true;
-});
-canvas.addEventListener("mouseleave", ()=>{
-  mouse.active = false;
-});
-
+let mouse = { x: -9999, y: -9999, active: false };
 function initCurtain(){
   curtain = [];
-  for(let c=0;c<COLS;c++){
+  for(let c = 0; c < COLS; c++){
     const col = [];
-    const x = frameLeft + c*(frameRight-frameLeft)/(COLS-1);
-    for(let s=0;s<SEGS;s++){
+    const x = W * (0.07 + c / (COLS - 1) * 0.86);
+    // 雨帘上移 H*0.20，想要更高改成0.18，更低改成0.24
+    for(let s = 0; s < SEGS; s++){
+      const y = H * 0.20 + s * REST;
       col.push({
-        x:x,
-        y: frameTop + s * REST,
-        oldX:x,
-        oldY: frameTop + s * REST,
-        pinned: s===0,
-        weight: s/(SEGS-1)
+        x: x,
+        y: y,
+        oldX: x,
+        oldY: y,
+        pinned: s === 0,
+        weight: s / (SEGS - 1)
       });
     }
     curtain.push(col);
@@ -239,158 +320,151 @@ function initCurtain(){
 }
 function initDrops(){
   drops = [];
-  for(let i=0;i<340;i++){
+  for(let i = 0; i < 460; i++){
+    const col = Math.floor(Math.random() * COLS);
+    const seg = Math.floor(Math.random() * SEGS);
     drops.push({
-      col: Math.floor(Math.random()*COLS),
-      seg: Math.random()*SEGS,
-      offset: Math.random()
+      col: col,
+      seg: seg,
+      offset: Math.random(),
+      speed: 0.018 + Math.random() * 0.028,
+      size: 1.1 + Math.random() * 1.8
     });
   }
 }
-function updatePoints(){
-  for(let c=0;c<COLS;c++){
-    for(let s=0;s<SEGS;s++){
+function updateCurtain(){
+  for(let c = 0; c < COLS; c++){
+    for(let s = 0; s < SEGS; s++){
       const p = curtain[c][s];
       if(p.pinned) continue;
-      const vx = (p.x-p.oldX)*0.992;
-      const vy = (p.y-p.oldY)*0.992;
+      const vx = (p.x - p.oldX) * 0.99;
+      const vy = (p.y - p.oldY) * 0.99;
       p.oldX = p.x;
       p.oldY = p.y;
       p.x += vx;
       p.y += vy;
-      p.y +=0.48;
+      p.y += 0.5;
       if(mouse.active){
         const dx = mouse.x - p.x;
         const dy = mouse.y - p.y;
         const dist2 = dx*dx + dy*dy;
-        const r =90;
-        if(dist2 < r*r){
-          const dist = Math.sqrt(dist2)||1;
-          const pull = 1 - dist/r;
-          p.x += dx * pull *0.10;
-          const liftStrength = p.weight *1.1;
-          if(dist<70){
-            p.y -= (1-dist/70)*liftStrength;
+        const r = 120;
+        if(dist2 < r * r){
+          const dist = Math.sqrt(dist2) || 1;
+          const pull = 1 - dist / r;
+          p.x += dx * pull * 0.07;
+          if(dist < 90){
+            p.y -= pull * p.weight * 1.2;
           }
         }
       }
-      if(p.y>frameBottom-4) p.y = frameBottom-4;
+      if(p.y > H - 10){
+        p.y = H - 10;
+        p.oldY = p.y;
+      }
     }
   }
 }
 function satisfyConstraints(){
-  for(let i=0;i<2;i++){
-    for(let c=0;c<COLS;c++){
-      for(let s=0;s<SEGS-1;s++){
+  for(let i = 0; i < 4; i++){
+    for(let c = 0; c < COLS; c++){
+      for(let s = 0; s < SEGS - 1; s++){
         const p1 = curtain[c][s];
-        const p2 = curtain[c][s+1];
-        const dx = p2.x-p1.x;
-        const dy = p2.y-p1.y;
-        const dist = Math.sqrt(dx*dx+dy*dy)||1;
-        const diff = (dist - REST)/dist;
-        const ox = dx*diff*0.5;
-        const oy = dy*diff*0.5;
-        if(!p1.pinned){ p1.x +=ox; p1.y +=oy; }
-        p2.x -=ox; p2.y -=oy;
+        const p2 = curtain[c][s + 1];
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+        const diff = (dist - REST) / dist;
+        const ox = dx * diff * 0.5;
+        const oy = dy * diff * 0.5;
+        if(!p1.pinned){
+          p1.x += ox;
+          p1.y += oy;
+        }
+        p2.x -= ox;
+        p2.y -= oy;
       }
     }
   }
 }
-
-// 噪点磨砂背景，模拟图二交融弥散质感
-function drawNoisyGradient(){
-  // 平滑插值过渡颜色
-  currentColor.c1[0] += (targetColor.c1[0] - currentColor.c1[0]) * 0.025;
-  currentColor.c1[1] += (targetColor.c1[1] - currentColor.c1[1]) * 0.025;
-  currentColor.c1[2] += (targetColor.c1[2] - currentColor.c1[2]) * 0.025;
-  currentColor.c2[0] += (targetColor.c2[0] - currentColor.c2[0]) * 0.025;
-  currentColor.c2[1] += (targetColor.c2[1] - currentColor.c2[1]) * 0.025;
-  currentColor.c2[2] += (targetColor.c2[2] - currentColor.c2[2]) * 0.025;
-
-  const grad = ctx.createLinearGradient(0,0,W,H);
-  grad.addColorStop(0,`rgb(${currentColor.c1[0]},${currentColor.c1[1]},${currentColor.c1[2]})`);
-  grad.addColorStop(1,`rgb(${currentColor.c2[0]},${currentColor.c2[1]},${currentColor.c2[2]})`);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0,0,W,H);
-
-  // 叠加磨砂噪点
-  const imageData = ctx.getImageData(0,0,W,H);
-  const data = imageData.data;
-  for(let i=0;i<data.length;i+=4){
-    const noise = (Math.random()-0.5)*7;
-    data[i] = Math.min(255, Math.max(0, data[i]+noise));
-    data[i+1] = Math.min(255, Math.max(0, data[i+1]+noise));
-    data[i+2] = Math.min(255, Math.max(0, data[i+2]+noise));
-  }
-  ctx.putImageData(imageData,0,0);
-}
-
-function drawDrop(x,y,size){
-  ctx.beginPath();
-  ctx.moveTo(x, y-size);
-  ctx.lineTo(x-size*0.6, y+size*0.7);
-  ctx.lineTo(x+size*0.6, y+size*0.7);
-  ctx.closePath();
-  ctx.fillStyle="rgba(220,235,255,0.9)";
-  ctx.shadowColor="rgba(150,200,255,0.6)";
-  ctx.shadowBlur=4;
-  ctx.fill();
-}
-
-function render(){
-  drawNoisyGradient();
-
-  // 绘制雨帘
-  for(let c=0;c<COLS;c++){
-    ctx.beginPath();
-    ctx.moveTo(curtain[c][0].x, curtain[c][0].y);
-    for(let s=1;s<SEGS;s++){
-      const p = curtain[c][s];
-      ctx.lineTo(p.x,p.y);
-    }
-    ctx.strokeStyle="rgba(255,255,255,0.4)";
-    ctx.lineWidth=1.1;
-    ctx.stroke();
-  }
-
-  // 雨滴
+function updateDrops(){
   for(let d of drops){
-    d.seg +=0.03;
-    if(d.seg >= SEGS-1){
-      d.seg = SEGS-1;
-      d.offset +=0.05;
-      if(d.offset>1){
-        d.col = Math.floor(Math.random()*COLS);
-        d.seg = 0;
-        d.offset = 0;
-      }
+    d.offset += d.speed;
+    d.seg += d.speed * 9;
+    if(d.seg >= SEGS - 1){
+      d.seg = 0;
+      d.col = Math.floor(Math.random() * COLS);
     }
     const seg0 = Math.floor(d.seg);
-    const seg1 = Math.min(seg0+1, SEGS-1);
+    const seg1 = Math.min(seg0 + 1, SEGS - 1);
     const t = d.seg - seg0;
     const p0 = curtain[d.col][seg0];
     const p1 = curtain[d.col][seg1];
-    const x = p0.x + (p1.x-p0.x)*t;
-    const y = p0.y + (p1.y-p0.y)*t;
-    drawDrop(x,y,3.4);
+    d.x = p0.x + (p1.x - p0.x) * t;
+    d.y = p0.y + (p1.y - p0.y) * t;
   }
-
-  // 鼠标触碰发光
+}
+function drawDrop(x, y, size){
+  ctx.beginPath();
+  ctx.moveTo(x, y - size);
+  ctx.quadraticCurveTo(x + size * 0.7, y, x, y + size);
+  ctx.quadraticCurveTo(x - size * 0.7, y, x, y - size);
+  ctx.fillStyle = "rgba(224,240,255,0.95)";
+  ctx.shadowColor = "rgba(140,190,255,0.8)";
+  ctx.shadowBlur = 6;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+function drawCurtain(){
+  ctx.clearRect(0, 0, W, H);
+  // 外层柔光，增强雨帘存在感
+  ctx.strokeStyle = "rgba(180,210,240,0.35)";
+  ctx.lineWidth = 2.4;
+  for(let c = 0; c < COLS; c++){
+    ctx.beginPath();
+    for(let s = 0; s < SEGS; s++){
+      const p = curtain[c][s];
+      if(s === 0){
+        ctx.moveTo(p.x, p.y);
+      }else{
+        ctx.lineTo(p.x, p.y);
+      }
+    }
+    ctx.stroke();
+  }
+  // 内层清晰白线
+  ctx.strokeStyle = "rgba(255,255,255,0.55)";
+  ctx.lineWidth = 1.2;
+  for(let c = 0; c < COLS; c++){
+    ctx.beginPath();
+    for(let s = 0; s < SEGS; s++){
+      const p = curtain[c][s];
+      if(s === 0){
+        ctx.moveTo(p.x, p.y);
+      }else{
+        ctx.lineTo(p.x, p.y);
+      }
+    }
+    ctx.stroke();
+  }
+  for(let d of drops){
+    drawDrop(d.x, d.y, d.size);
+  }
   if(mouse.active){
-    for(let c=0;c<COLS;c++){
-      for(let s=0;s<SEGS;s++){
+    for(let c = 0; c < COLS; c++){
+      for(let s = 0; s < SEGS; s++){
         const p = curtain[c][s];
-        const dx = mouse.x-p.x;
-        const dy = mouse.y-p.y;
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
         const dist2 = dx*dx + dy*dy;
-        if(dist2 <70*70){
-          const dist = Math.sqrt(dist2)||1;
-          const f =1 - dist/70;
+        if(dist2 < 100 * 100){
+          const dist = Math.sqrt(dist2) || 1;
+          const f = 1 - dist / 100;
           ctx.beginPath();
-          ctx.arc(p.x,p.y,2.2+Math.random()*1.2,0,Math.PI*2);
-          ctx.fillStyle = `rgba(255, 230, 180, ${0.55*f})`;
-          ctx.shadowColor="rgba(255,210,120,1)";
-          ctx.shadowBlur=14;
+          ctx.arc(p.x, p.y, 2.4 + Math.random() * 1.4, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 230, 180, ${0.55 * f})`;
+          ctx.shadowColor = "rgba(255,210,120,1)";
+          ctx.shadowBlur = 16;
           ctx.fill();
         }
       }
@@ -398,71 +472,148 @@ function render(){
   }
   ctx.shadowBlur = 0;
 }
-
-function pickDate(){
-  const month = parseInt(document.getElementById("monthSelect").querySelector(".select-trigger").textContent);
-  const day = parseInt(document.getElementById("daySelect").querySelector(".select-trigger").textContent);
-  const found = rainData.find(d => d.month === month && d.day === day);
-  if(found){
-    rainfall = found.rainfall_mm ||0;
-    moodKey = found.mood_key || "clear";
-    // 切换目标渐变颜色
-    targetColor = moodColors[moodKey];
-    rainInfo.textContent = `${found.year}-${String(found.month).padStart(2,"0")}-${String(found.day).padStart(2,"0")} ｜ Rainfall ${rainfall} mm ｜ ${getMoodDesc(moodKey)}`;
-    initDrops();
-  }
-}
-function getMoodDesc(key){
-  const map = {
-    clear:"Clear · Bright & Light",
-    lightrain:"Light Rain · Quiet & Soft",
-    heavyrain:"Heavy Rain · Calm & Deep",
-    storm:"Storm · Tense & Strong"
-  }
-  return map[key];
-}
+// -------------------- 日期选择 --------------------
 function createCustomSelect(containerId, list, onChange){
   const container = document.getElementById(containerId);
   const trigger = container.querySelector(".select-trigger");
   const options = container.querySelector(".select-options");
-  list.forEach(value=>{
+  options.innerHTML = "";
+  options.classList.remove("open");
+  list.forEach(value => {
     const item = document.createElement("div");
     item.textContent = value;
-    item.addEventListener("click",()=>{
+    item.addEventListener("click", (e) => {
+      e.stopPropagation();
       trigger.textContent = value;
       options.classList.remove("open");
-      onChange();
-    })
+      onChange(value);
+    });
     options.appendChild(item);
-  })
-  trigger.addEventListener("click",e=>{
+  });
+  trigger.addEventListener("click", (e) => {
     e.stopPropagation();
-    document.querySelectorAll(".select-options").forEach(opt=>{if(opt!==options) opt.classList.remove("open")})
-    options.classList.toggle("open");
-  })
-  document.addEventListener("click",()=>options.classList.remove("open"))
+    document.querySelectorAll(".select-options").forEach(opt => {
+      if(opt !== options){
+        opt.classList.remove("open");
+      }
+    });
+    if(options.classList.contains("open")){
+      options.classList.remove("open");
+    }else{
+      options.classList.add("open");
+    }
+  });
+  document.addEventListener("click", () => {
+    options.classList.remove("open");
+  });
 }
-async function loadData(){
-  const res = await fetch("rain_data.json");
-  const data = await res.json();
-  rainData = data;
-  const months = [...new Set(data.map(d=>d.month))].sort((a,b)=>a-b);
-  const days = [...new Set(data.map(d=>d.day))].sort((a,b)=>a-b);
-  createCustomSelect("monthSelect", months, pickDate);
-  createCustomSelect("daySelect", days, pickDate);
-  if(data.length>0){
-    document.getElementById("monthSelect").querySelector(".select-trigger").textContent = data[0].month;
-    document.getElementById("daySelect").querySelector(".select-trigger").textContent = data[0].day;
-    pickDate();
+function getMoodDesc(key){
+  const map = {
+    "clear": "Clear · Bright & Light",
+    "lightrain": "Light Rain · Soft & Gentle",
+    "heavyrain": "Heavy Rain · Calm & Deep",
+    "storm": "Storm · Tense & Strong"
+  };
+  return map[key] || "Unknown Mood";
+}
+function getMoodByRain(mm){
+  if(mm <= 0){
+    return "clear";
+  }else if(mm < 10){
+    return "lightrain";
+  }else if(mm <30){
+    return "heavyrain";
+  }else{
+    return "storm";
   }
 }
-function loop(){
-  updatePoints();
-  satisfyConstraints();
-  render();
-  requestAnimationFrame(loop);
+// 更新pickDate，支持年份
+function pickDate(selYear, selMonth, selDay){
+  const found = rawRainData.find(d => {
+    return Number(d.year) === Number(selYear)
+        && Number(d.month) === Number(selMonth)
+        && Number(d.day) === Number(selDay);
+  });
+  if(!found) return;
+  rainfall = Number(found.rainfall) || 0;
+  moodKey = getMoodByRain(rainfall);
+  infoText.textContent =
+    `${selYear}-${String(selMonth).padStart(2,"0")}-${String(selDay).padStart(2,"0")} | Rainfall ${rainfall} mm | ${getMoodDesc(moodKey)}`;
+  initDrops();
 }
 
+async function loadData(){
+  try{
+    const res = await fetch("rain_data.json");
+    rawRainData = await res.json();
+    if(!Array.isArray(rawRainData) || rawRainData.length === 0){
+      infoText.textContent = "rain_data.json is empty or not in correct format.";
+      return;
+    }
+    // 解析date拆分年月日
+    rawRainData = rawRainData.map(item=>{
+      const [y,m,d] = item.date.split("-");
+      return {
+        ...item,
+        year: Number(y),
+        month: Number(m),
+        day: Number(d)
+      }
+    })
+    // 构建年份下拉
+    const years = [...new Set(rawRainData.map(d => Number(d.year)))].sort((a,b)=>a-b);
+    createCustomSelect("yearSelect", years, (selectedYear)=>{
+      // 根据年份筛选可用月份
+      const availMonth = [...new Set(rawRainData.filter(d=>d.year === selectedYear).map(d=>Number(d.month)))].sort((a,b)=>a-b);
+      createCustomSelect("monthSelect", availMonth, (selectedMonth)=>{
+        // 根据年月筛选可用日期
+        const availDay = [...new Set(rawRainData.filter(d=>d.year===selectedYear && d.month===selectedMonth).map(d=>Number(d.day)))].sort((a,b)=>a-b);
+        createCustomSelect("daySelect", availDay, (selectedDay)=>{
+          pickDate(selectedYear, selectedMonth, selectedDay);
+        })
+      })
+    })
+
+    // 默认第一条数据
+    const first = rawRainData[0];
+    document.querySelector("#yearSelect .select-trigger").textContent = first.year;
+    document.querySelector("#monthSelect .select-trigger").textContent = first.month;
+    document.querySelector("#daySelect .select-trigger").textContent = first.day;
+    pickDate(first.year, first.month, first.day);
+
+  }catch(err){
+    console.error("Failed to load rain_data.json", err);
+    infoText.textContent = "Failed to load rain_data.json. Please run with local server.";
+  }
+}
+// -------------------- 启动与循环 --------------------
+function resize(){
+  W = window.innerWidth;
+  H = window.innerHeight;
+  bgCanvas.width = W;
+  bgCanvas.height = H;
+  curtainCanvas.width = W;
+  curtainCanvas.height = H;
+  initCurtain();
+  initDrops();
+}
+window.addEventListener("resize", resize);
+curtainCanvas.addEventListener("mousemove", (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  mouse.active = true;
+});
+curtainCanvas.addEventListener("mouseleave", () => {
+  mouse.active = false;
+});
+function loop(){
+  drawFluidBackground();
+  updateCurtain();
+  satisfyConstraints();
+  updateDrops();
+  drawCurtain();
+  requestAnimationFrame(loop);
+}
 resize();
 loop();
 loadData();
