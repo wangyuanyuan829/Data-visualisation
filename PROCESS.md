@@ -12,7 +12,7 @@ I selected rainfall from Hong Kong Observatory.
 
 ## Tools
 - Data source: Hong Kong Observatory rainfall data
-- AI assistance: ChatGPT, Doubao (豆包), Gemini — used for brainstorming visual metaphors,
+- AI assistance: ChatGPT, Doubao, Gemini — used for brainstorming visual metaphors,
   drafting data-mapping logic, and debugging Python scripts
 - Processing & rendering: Python (fetch.py for data collection, plot.py for visualization)
 - Version control: Git / GitHub
